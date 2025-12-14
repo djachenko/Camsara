@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import Combine
 
 @main
 struct CamsaraApp: App {
+    private let viewModel = ContentViewModel()
+    private let cameraManager = CameraManager()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CameraPreviewViewHolder(session: cameraManager.session)
         }
     }
 }
