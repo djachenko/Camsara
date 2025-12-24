@@ -1,5 +1,5 @@
 //
-//  FrameView2.swift
+//  CameraPreviewView.swift
 //  Camsara
 //
 //  Created by justin on 12.12.2025.
@@ -41,6 +41,7 @@ final class CameraPreviewView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         videoPreviewLayer.frame = bounds
     }
 }
@@ -58,7 +59,7 @@ struct CameraPreviewViewHolder : UIViewRepresentable {
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> UIView {
         CameraPreviewView(session: session)
     }
 }

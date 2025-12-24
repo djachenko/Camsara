@@ -10,12 +10,20 @@ import Combine
 
 @main
 struct CamsaraApp: App {
-    private let viewModel = ContentViewModel()
-    private let cameraManager = CameraManager()
+    private let cameraService = PhysicalCameraService()
 
     var body: some Scene {
         WindowGroup {
-            CameraPreviewViewHolder(session: cameraManager.session)
+            if let cameraService {
+                MainView(
+                    viewModel: .init(
+                        cameraService: cameraService,
+                        frameViewModel: FrameViewModel(session: cameraService.session)
+                    )
+                )
+            } else {
+                Text("No camera available")
+            }
         }
     }
 }
