@@ -4,12 +4,12 @@
 # Первым делом исключаем папки, которые не нужно проверять.
 # Это ускоряет работу SwiftLint и предотвращает ложные срабатывания.
 excluded:
-  - Pods # Зависимости CocoaPods
-  - Carthage # Зависимости Carthage
-  - DerivedData # Сгенерированные Xcode файлы
-  - .build # Папка сборки Swift Package Manager
-  - fastlane # Скрипты автоматизации
-  - vendor # Сторонние библиотеки (если есть)
+#  - Pods # Зависимости CocoaPods
+#  - Carthage # Зависимости Carthage
+#  - DerivedData # Сгенерированные Xcode файлы
+#  - .build # Папка сборки Swift Package Manager
+#  - fastlane # Скрипты автоматизации
+#  - vendor # Сторонние библиотеки (если есть)
 
 ### 2. Включаемые правила (Opt-in Rules) ###
 # Эти полезные правила не входят в стандартный набор, но их стоит включить.
@@ -18,7 +18,7 @@ opt_in_rules:
   - empty_string # Рекомендует использовать `isEmpty` вместо сравнения с ""
   - closure_end_indentation # Консистентный отступ для замыканий
   - first_where # Предлагает использовать `.first(where:)` вместо `.filter { ... }.first`
-#  - sorted_imports  Автоматически сортирует импорты
+  - sorted_imports # Автоматически сортирует импорты
   - number_separator # Рекомендует разделители разрядов в больших числах (1_000_000)
   - yoda_condition # Запрещает условия в стиле "Йоды" (`if 42 == value` -> `if value == 42`)
 
@@ -29,6 +29,23 @@ opt_in_rules:
   - redundant_type_annotation
   - redundant_string_enum_value
   - force_unwrapping
+
+  # === НОВЫЕ ДОБАВЛЕНИЯ ===
+  # Критически важные правила безопасности
+  - implicitly_unwrapped_optional # Запрещает опасные Type! (кроме @IBOutlet)
+  - unowned_variable_capture      # Предупреждает о потенциальных циклах в замыканиях
+  - fatal_error_message           # Требует сообщение для fatalError()
+  - legacy_cggeometry_functions   # Заставляет использовать CGRect(x:) вместо CGRectMake()
+  - legacy_nsgeometry_functions   # Аналогично для NSRect
+  - unused_optional_binding       # Ловит неиспользуемые if let
+
+  # Правила для чистоты асинхронного/современного кода
+#  - closure_body_length           # Контролирует размер замыканий
+  - unavailable_function          # Предупреждает о вызове @available функций
+  - strict_fileprivate            # Запрещает fileprivate в расширениях (encourages private)
+  - operator_usage_whitespace     # Следит за пробелами вокруг операторов
+  - multiline_arguments           # Единообразие для многострочных аргументов
+  - toggle_bool                   # Рекомендует `bool.toggle()` вместо `bool = !bool`
 
 ### 3. Правила, которые можно сразу отключить (Disabled Rules) ###
 # Эти правила часто вызывают споры или не подходят для всех проектов.
@@ -83,6 +100,21 @@ force_try:
 force_cast:
   severity: warning
 
+implicitly_unwrapped_optional:
+  severity: warning # Сначала предупреждение, потом можно перевести в error
+
+unowned_variable_capture:
+  severity: warning
+
+# Настройка для контроля замыканий
+#closure_body_length:
+#  warning: 30
+#  error: 50
+
+# Правила для аккуратных многострочных выражений
+multiline_arguments:
+  first_argument_location: next_line # или 'same_line'
+  only_enforce_after_first_closure_on_first_line: true
 
 
 ### 5. Формат отчета и общие настройки ###

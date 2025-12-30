@@ -5,8 +5,8 @@
 //  Created by justin on 26.12.2025.
 //
 
-import SwiftUI
 import SnapKit
+import SwiftUI
 
 private final class MarkView: UIView {}
 
@@ -32,6 +32,7 @@ private final class MainMarkerView: UIView {
         setupContraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -118,6 +119,7 @@ final class WheelPickerUIView: UIView {
         setupContraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

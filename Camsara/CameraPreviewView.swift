@@ -5,9 +5,9 @@
 //  Created by justin on 12.12.2025.
 //
 
-import UIKit
 import AVFoundation
 import SwiftUI
+import UIKit
 
 final class CameraPreviewView: UIView {
     private var captureSession: AVCaptureSession
@@ -18,6 +18,7 @@ final class CameraPreviewView: UIView {
         super.init(frame: .zero)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
