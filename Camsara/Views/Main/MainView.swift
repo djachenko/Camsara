@@ -5,10 +5,8 @@
 //  Created by justin on 11.12.2025.
 //
 
-import SwiftUI
 import Combine
-
-
+import SwiftUI
 
 
 struct MainView: View {
@@ -49,5 +47,3 @@ struct MainView: View {
 #Preview {
     MainView(viewModel: .forPreview)
 }
-
-

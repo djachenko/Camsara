@@ -10,7 +10,6 @@ import Combine
 import AVFoundation
 
 
-
 struct FrameView: View {
     @ObservedObject var viewModel: FrameViewModel
 

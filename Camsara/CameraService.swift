@@ -58,13 +58,13 @@ extension PhysicalCameraService: CameraService {
         // builtInWideAngleCamera camera: focal 26.78571488320383 mm, zoom 1.0-189.0
         // builtInUltraWideCamera camera: focal 13.5738718906176 mm, zoom 1.0-189.0
     }
-    
+
     var currentFocalLength: Double {
         camera.videoZoomFactor * deviceFocalLength
     }
 
     func set(zoom: Double) {
-        try! camera.lockForConfiguration()
+        try? camera.lockForConfiguration()
         defer { camera.unlockForConfiguration() }
 
         if camera.isRampingVideoZoom {
@@ -127,13 +127,12 @@ private extension PhysicalCameraService {
 }
 
 
-
 final class MockCameraService: CameraService {
     var deviceFocalLength = 24.0
 
     func set(zoom: Double) {
         print("mock camera new zoom: \(zoom)")
     }
-    
+
     let session = AVCaptureSession()
 }

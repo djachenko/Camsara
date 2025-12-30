@@ -31,7 +31,7 @@ private final class MainMarkerView: UIView {
         setupViews()
         setupContraints()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -213,4 +213,3 @@ struct WheelPickerUIViewHolder: UIViewRepresentable {
 #Preview {
     MainView(viewModel: .forPreview)
 }
-

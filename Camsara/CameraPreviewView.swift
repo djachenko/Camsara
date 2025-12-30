@@ -22,18 +22,19 @@ final class CameraPreviewView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override class var layerClass: AnyClass {
+    override static var layerClass: AnyClass {
         AVCaptureVideoPreviewLayer.self
     }
 
-    var videoPreviewLayer: AVCaptureVideoPreviewLayer {
-        return layer as! AVCaptureVideoPreviewLayer
+    var videoPreviewLayer: AVCaptureVideoPreviewLayer? {
+        return layer as? AVCaptureVideoPreviewLayer
     }
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
-        if nil != self.superview {
+        if superview != nil,
+           let videoPreviewLayer {
             videoPreviewLayer.session = captureSession
             videoPreviewLayer.videoGravity = .resizeAspect
         }
@@ -41,8 +42,8 @@ final class CameraPreviewView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        videoPreviewLayer.frame = bounds
+
+        videoPreviewLayer?.frame = bounds
     }
 }
 
@@ -54,7 +55,7 @@ final class CameraPreviewView: UIView {
 //    }
 //}
 
-struct CameraPreviewViewHolder : UIViewRepresentable {
+struct CameraPreviewViewHolder: UIViewRepresentable {
     let session: AVCaptureSession
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}

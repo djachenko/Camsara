@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		D074A01A2F01088100E670C7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D074A0192F01088100E670C7 /* SnapKit */; };
 /* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D04150D22EEB24C00050D87A /* Camsara.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Camsara.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0D5E3FE2F0456F8005C26A6 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -38,6 +40,7 @@
 			children = (
 				D04150D42EEB24C00050D87A /* Camsara */,
 				D04150D32EEB24C00050D87A /* Products */,
+				D0D5E3FE2F0456F8005C26A6 /* .swiftlint.yml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,6 +66,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D0E7F4642F0451C4007F9A8F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D04150D42EEB24C00050D87A /* Camsara */,
@@ -100,6 +104,7 @@
 			mainGroup = D04150C92EEB24C00050D87A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				D0E79A2F2EFBFCF8006FA67C /* XCRemoteSwiftPackageReference "SwiftLint" */,
 				D074A0182F01088100E670C7 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -131,6 +136,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D0E7F4642F0451C4007F9A8F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = D0E7F4632F0451C4007F9A8F /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D04150DB2EEB24C10050D87A /* Debug */ = {
@@ -352,6 +364,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		D0E79A2F2EFBFCF8006FA67C /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.62.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -359,6 +379,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D074A0182F01088100E670C7 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		D0E7F4632F0451C4007F9A8F /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0E79A2F2EFBFCF8006FA67C /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
