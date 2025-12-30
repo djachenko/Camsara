@@ -22,6 +22,14 @@ opt_in_rules:
   - number_separator # Рекомендует разделители разрядов в больших числах (1_000_000)
   - yoda_condition # Запрещает условия в стиле "Йоды" (`if 42 == value` -> `if value == 42`)
 
+  - discouraged_object_literal
+  - unused_closure_parameter
+  - trailing_closure
+  - unneeded_parentheses_in_closure_argument
+  - redundant_type_annotation
+  - redundant_string_enum_value
+  - force_unwrapping
+
 ### 3. Правила, которые можно сразу отключить (Disabled Rules) ###
 # Эти правила часто вызывают споры или не подходят для всех проектов.
 # Можно начать с их отключения.
@@ -65,6 +73,15 @@ trailing_comma:
 
 vertical_whitespace:
   max_empty_lines: 2
+
+force_unwrapping:
+  severity: warning # Сначала пусть будет предупреждением
+
+force_try:
+  severity: warning
+
+force_cast:
+  severity: warning
 
 
 
