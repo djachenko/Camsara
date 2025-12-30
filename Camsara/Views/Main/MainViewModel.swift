@@ -25,6 +25,8 @@ final class MainViewModel: ObservableObject {
         self.cameraService = cameraService
         self.frameViewModel = frameViewModel
 
+        sliderValue = Int(cameraService.deviceFocalLength)
+
         $sliderValue.sink { [weak self] sliderFocal in
             guard let self,
                 sliderFocal != 0 else {
@@ -36,9 +38,6 @@ final class MainViewModel: ObservableObject {
 
             let frameScale = (Constants.threshold...1).clamp(focalLength / sliderFocal)
             let frameZoom = max(sliderFocal / cameraService.deviceFocalLength * Constants.threshold, 1)
-
-            print("frame: \(frameScale)")
-            print("camera: \(frameZoom)")
 
             self.frameViewModel.scaleFactor = frameScale
             self.cameraService.set(zoom: frameZoom)

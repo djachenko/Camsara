@@ -64,7 +64,14 @@ extension PhysicalCameraService: CameraService {
     }
 
     func set(zoom: Double) {
-        camera.ramp(toVideoZoomFactor: zoom, withRate: 1.0)
+        try! camera.lockForConfiguration()
+        defer { camera.unlockForConfiguration() }
+
+        if camera.isRampingVideoZoom {
+            camera.cancelVideoZoomRamp()
+        }
+
+        camera.ramp(toVideoZoomFactor: zoom, withRate: 3.0)
     }
 
     func set(focalLength: Double) {
@@ -124,7 +131,9 @@ private extension PhysicalCameraService {
 final class MockCameraService: CameraService {
     var deviceFocalLength = 24.0
 
-    func set(zoom: Double) {}
+    func set(zoom: Double) {
+        print("mock camera new zoom: \(zoom)")
+    }
     
     let session = AVCaptureSession()
 }
