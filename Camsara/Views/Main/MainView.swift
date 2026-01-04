@@ -21,23 +21,15 @@ struct MainView: View {
         )
 
         GeometryReader { geometry in
-            HStack {
+            ZStack(alignment: .leading) {
+                FrameView(viewModel: viewModel.frameViewModel)
+
                 WheelPicker(
                     config: config,
                     value: $viewModel.sliderValue
                 )
                 .frame(width: geometry.size.width * 0.1)
                 .background(.yellow.opacity(0.2))
-
-                WheelPickerUIViewHolder(
-                    config: config,
-                    uiConfig: .init(),
-                    verticalInset: geometry.size.height / 2
-                )
-                .frame(width: geometry.size.width * 0.1)
-                .background(.green.opacity(0.2))
-
-                FrameView(viewModel: viewModel.frameViewModel)
             }
         }
         .ignoresSafeArea()

@@ -16,8 +16,19 @@ struct FrameView: View {
     var body: some View {
         ZStack {
             CameraPreviewViewHolder(session: viewModel.session)
+                .scaleEffect(viewModel.previewScale)
                 .background(.red)
                 .ignoresSafeArea()
+
+            GeometryReader { geometry in
+                Color.clear
+                    .onAppear {
+                        viewModel.size = geometry.size
+                    }
+                    .onChange(of: geometry.size) { newSize in
+                        viewModel.size = newSize
+                    }
+            }
 
             ZStack {
                 GeometryReader { geometry in
@@ -25,11 +36,15 @@ struct FrameView: View {
                         .fill(.green.opacity(0.2))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
+
+                    let holeWidth = geometry.size.width * viewModel.frameScale
+                    let holeHeight = holeWidth * 2 / 3
+
                     Rectangle()
                         .fill(.white)
                         .frame(
-                            width: geometry.size.width * viewModel.scaleFactor,
-                            height: geometry.size.height * viewModel.scaleFactor
+                            width: holeWidth,
+                            height: holeHeight
                         )
                         .position(
                             x: geometry.size.width * 0.5,

@@ -11,6 +11,7 @@ import SwiftUI
 @main
 struct CamsaraApp: App {
     private let cameraService = PhysicalCameraService()
+//    private let cameraService: CameraService? = MockCameraService()
 
     var body: some Scene {
         WindowGroup {

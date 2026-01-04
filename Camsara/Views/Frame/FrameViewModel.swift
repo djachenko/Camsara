@@ -11,14 +11,19 @@ import Combine
 final class FrameViewModel: ObservableObject {
     let session: AVCaptureSession
 
-    @Published var scaleFactor: Double
+    @Published var frameScale: Double
+    @Published var previewScale: Double
+
+    @Published var size: CGSize = .zero
 
     init(
         session: AVCaptureSession,
         scaleFactor: Double = 1.0,
+        previewScale: Double = 1.0,
     ) {
         self.session = session
-        self.scaleFactor = scaleFactor
+        self.frameScale = scaleFactor
+        self.previewScale = previewScale
     }
 }
 

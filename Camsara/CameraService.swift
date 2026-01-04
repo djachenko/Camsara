@@ -9,7 +9,9 @@ import Foundation
 
 protocol CameraService {
     var session: AVCaptureSession { get }
+
     var deviceFocalLength: Double { get }
+    var w2hRatio: Double { get }
 
     func set(zoom: Double)
 }
@@ -128,6 +130,8 @@ private extension PhysicalCameraService {
 
 
 final class MockCameraService: CameraService {
+    var w2hRatio: Double = 4.0 / 3.0
+
     var deviceFocalLength = 24.0
 
     func set(zoom: Double) {
