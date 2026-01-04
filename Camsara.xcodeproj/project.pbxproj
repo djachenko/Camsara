@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D004175A2F0AF60600408720 /* DITranquillity in Frameworks */ = {isa = PBXBuildFile; productRef = D00417592F0AF60600408720 /* DITranquillity */; };
 		D074A01A2F01088100E670C7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D074A0192F01088100E670C7 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D074A01A2F01088100E670C7 /* SnapKit in Frameworks */,
+				D004175A2F0AF60600408720 /* DITranquillity in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +78,7 @@
 			name = Camsara;
 			packageProductDependencies = (
 				D074A0192F01088100E670C7 /* SnapKit */,
+				D00417592F0AF60600408720 /* DITranquillity */,
 			);
 			productName = Camsara;
 			productReference = D04150D22EEB24C00050D87A /* Camsara.app */;
@@ -108,6 +111,7 @@
 			packageReferences = (
 				D0E79A2F2EFBFCF8006FA67C /* XCRemoteSwiftPackageReference "SwiftLint" */,
 				D074A0182F01088100E670C7 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D00417582F0AF60600408720 /* XCRemoteSwiftPackageReference "DITranquillity" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D04150D32EEB24C00050D87A /* Products */;
@@ -206,6 +210,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -262,6 +267,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -292,7 +298,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -326,7 +332,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -358,6 +364,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D00417582F0AF60600408720 /* XCRemoteSwiftPackageReference "DITranquillity" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivlevAstef/DITranquillity";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		D074A0182F01088100E670C7 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -377,6 +391,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D00417592F0AF60600408720 /* DITranquillity */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D00417582F0AF60600408720 /* XCRemoteSwiftPackageReference "DITranquillity" */;
+			productName = DITranquillity;
+		};
 		D074A0192F01088100E670C7 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D074A0182F01088100E670C7 /* XCRemoteSwiftPackageReference "SnapKit" */;

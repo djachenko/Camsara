@@ -1,23 +1,15 @@
 //
-//  CameraService.swift
+//  PhysicalCameraService.swift
 //  Camsara
 //
-//  Created by justin on 11.12.2025.
+//  Created by justin on 5/1/26.
 //
+
 import AVFoundation
-import Foundation
 
-protocol CameraService {
-    var session: AVCaptureSession { get }
-
-    var deviceFocalLength: Double { get }
-    var w2hRatio: Double { get }
-
-    func set(zoom: Double)
-}
 
 final class PhysicalCameraService {
-    let session = AVCaptureSession()
+    let session: AVCaptureSession
 
     var w2hRatio: Double {
         let dimensions = camera.activeFormat.formatDescription.dimensions
@@ -28,7 +20,7 @@ final class PhysicalCameraService {
     private let sessionQueue = DispatchQueue(label: "com.raywenderlich.SessionQ")
     private let camera: AVCaptureDevice
 
-    init?() {
+    init?(session: AVCaptureSession) {
         guard let camera = AVCaptureDevice.DiscoverySession(
             deviceTypes: [
                 .builtInTripleCamera,
@@ -42,6 +34,7 @@ final class PhysicalCameraService {
             return nil
         }
 
+        self.session = session
         self.camera = camera
 
         configure()
@@ -126,17 +119,4 @@ private extension PhysicalCameraService {
             self?.session.stopRunning()
         }
     }
-}
-
-
-final class MockCameraService: CameraService {
-    var w2hRatio: Double = 4.0 / 3.0
-
-    var deviceFocalLength = 24.0
-
-    func set(zoom: Double) {
-        print("mock camera new zoom: \(zoom)")
-    }
-
-    let session = AVCaptureSession()
 }

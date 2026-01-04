@@ -1,5 +1,5 @@
 {
-  "originHash" : "b6b81641880f155005ac3b7bab30afae54b84d88fea32b3ce0d65b009ed3fa66",
+  "originHash" : "02a030ff692d3326e1f3c8069f8c7213d9b89ed0a7d9be7b9bc04f1d85893367",
   "pins" : [
     {
       "identity" : "collectionconcurrencykit",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "e45a26384239e028ec87fbcc788f513b67e10d8f",
         "version" : "1.9.0"
+      }
+    },
+    {
+      "identity" : "ditranquillity",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ivlevAstef/DITranquillity",
+      "state" : {
+        "revision" : "9e7511a7bafe4955fc90f1b521836c2f37359764",
+        "version" : "5.0.5"
       }
     },
     {
@@ -53,6 +62,15 @@
       "state" : {
         "revision" : "6673b05995983461eef015c4768f1483c245db22",
         "version" : "603.0.0-prerelease-2025-09-15"
+      }
+    },
+    {
+      "identity" : "swiftlazy",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ivlevAstef/SwiftLazy.git",
+      "state" : {
+        "revision" : "1d1cfb4c8552fa2d2bf83cabc99ac9e60171d874",
+        "version" : "1.6.1"
       }
     },
     {

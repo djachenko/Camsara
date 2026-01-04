@@ -81,7 +81,7 @@ final class MainViewModel: ObservableObject {
 
 extension MainViewModel {
     static let forPreview = MainViewModel(
-        cameraService: MockCameraService(),
+        cameraService: MockCameraService.forPreview,
         frameViewModel: .forPreview
     )
 }
