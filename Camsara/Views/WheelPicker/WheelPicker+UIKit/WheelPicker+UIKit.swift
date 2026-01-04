@@ -50,10 +50,10 @@ final class WheelPickerUIView: UIView {
         return scrollView
     }()
 
-    private let indicatorView = {
+    private lazy var indicatorView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(uiConfig.indicatorColor)
 
         return view
     }()
@@ -138,9 +138,9 @@ private extension WheelPickerUIView {
     func setupViews() {
         config.steps.forEach { step in
             let view = if config.mainSteps.contains(step) {
-                makeMainMarkView(step: step)
+                makeMainMarkerView(step: step)
             } else {
-                makeMarkView()
+                makeMarkerView()
             }
 
             stackView.addArrangedSubview(view)
@@ -189,17 +189,18 @@ private extension WheelPickerUIView {
 // MARK: builders
 
 private extension WheelPickerUIView {
-    func makeMarkView() -> UIView {
-        let markView = MarkView()
+    func makeMarkerView() -> UIView {
+        let markView = MarkerView()
         markView.backgroundColor = UIColor(uiConfig.markerColor)
 
         return markView
     }
 
-    func makeMainMarkView(step: Int) -> UIView {
+    func makeMainMarkerView(step: Int) -> UIView {
         let markView = MainMarkerView()
         markView.backgroundColor = UIColor(uiConfig.mainMarkerColor)
-        markView.set(value: "\(step)")
+        markView.set(labelColor: UIColor(uiConfig.labelsColor))
+        markView.configure(value: "\(step)")
 
         return markView
     }

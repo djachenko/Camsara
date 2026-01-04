@@ -29,7 +29,6 @@ struct MainView: View {
                     value: $viewModel.sliderValue
                 )
                 .frame(width: geometry.size.width * 0.1)
-                .background(.yellow.opacity(0.2))
             }
         }
         .ignoresSafeArea()

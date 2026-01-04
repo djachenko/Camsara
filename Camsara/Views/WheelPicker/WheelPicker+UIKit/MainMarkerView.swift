@@ -38,7 +38,13 @@ final class MainMarkerView: UIView {
 }
 
 extension MainMarkerView {
-    func set(value: String) {
+    func set(labelColor: UIColor) {
+        valueLabel.textColor = labelColor
+    }
+}
+
+extension MainMarkerView {
+    func configure(value: String) {
         valueLabel.isHidden = false
         valueLabel.text = value
     }

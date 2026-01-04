@@ -22,8 +22,12 @@ struct WheelPicker: View {
         let markerWidth = markerWidth
         let mainMarkerWidth = 2 * markerWidth
 
-        let markerColor = Color.primary
-        let mainMarkerColor = Color.primary
+        let markerColor = Color.white
+        let mainMarkerColor = Color.white
+
+        let indicatorColor = Color.white
+
+        let labelsColor = Color.white
     }
 
     let config: Config
@@ -69,10 +73,10 @@ struct WheelPicker: View {
                                 .overlay(alignment: .trailing) {
                                     if isMain {
                                         Text("\(index)")
-                                        // Text("\(Int(Double(index / config.steps) * config.multiplier))")
                                             .font(.caption)
                                             .fontWeight(.semibold)
                                             .textScale(.secondary)
+                                            .foregroundStyle(uiConfig.labelsColor)
                                             .fixedSize()
                                             .offset(x: 20)
                                     }
@@ -103,6 +107,7 @@ struct WheelPicker: View {
                 )
                 .overlay(alignment: .center) {
                     Rectangle()
+                        .fill(uiConfig.indicatorColor)
                         .frame(
                             width: 40,
                             height: 1

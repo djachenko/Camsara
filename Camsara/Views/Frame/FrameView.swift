@@ -17,7 +17,7 @@ struct FrameView: View {
         ZStack {
             CameraPreviewViewHolder(session: viewModel.session)
                 .scaleEffect(viewModel.previewScale)
-                .background(.red)
+                .background(.black)
                 .ignoresSafeArea()
 
             GeometryReader { geometry in
@@ -33,7 +33,7 @@ struct FrameView: View {
             ZStack {
                 GeometryReader { geometry in
                     Rectangle()
-                        .fill(.green.opacity(0.2))
+                        .fill(.black.opacity(0.3))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
 

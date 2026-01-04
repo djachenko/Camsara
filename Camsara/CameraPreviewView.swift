@@ -38,6 +38,8 @@ final class CameraPreviewView: UIView {
            let videoPreviewLayer {
             videoPreviewLayer.session = captureSession
             videoPreviewLayer.videoGravity = .resizeAspect
+
+            videoPreviewLayer.connection?.videoOrientation = .landscapeLeft
         }
     }
 
