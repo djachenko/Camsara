@@ -119,7 +119,8 @@ struct WheelPicker: View {
                 WheelPickerUIViewHolder(
                     config: config,
                     uiConfig: uiConfig,
-                    verticalInset: horizontalPadding
+                    verticalInset: horizontalPadding,
+                    value: $value
                 )
             }
         }

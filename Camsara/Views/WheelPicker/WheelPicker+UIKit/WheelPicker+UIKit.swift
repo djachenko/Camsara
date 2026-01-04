@@ -8,60 +8,15 @@
 import SnapKit
 import SwiftUI
 
-private final class MarkView: UIView {}
-
-private final class MainMarkerView: UIView {
-    private let valueLabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(
-            ofSize: UIFont.preferredFont(forTextStyle: .caption2).pointSize,
-            weight: .semibold
-        )
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
-        label.setContentHuggingPriority(.required, for: .horizontal)
-
-        return label
-    }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        setupSelf()
-        setupViews()
-        setupContraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension MainMarkerView {
-    func set(value: String) {
-        valueLabel.isHidden = false
-        valueLabel.text = value
-    }
-}
-
-private extension MainMarkerView {
-    func setupSelf() {}
-
-    func setupViews() {
-        addSubview(valueLabel)
-        valueLabel.isHidden = true
-    }
-
-    func setupContraints() {
-        valueLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview().offset(20)
-            $0.centerY.equalToSuperview()
-        }
-    }
+protocol WheelPickerUIViewDelegate: AnyObject {
+    func wheelPickerView(_ view: WheelPickerUIView, didSelectValue value: Int)
 }
 
 final class WheelPickerUIView: UIView {
+    private enum Constants {
+        static let markerThickness = UIScreen.perfectPixel
+    }
+
     let config: WheelPicker.Config
     let uiConfig: WheelPicker.UIConfig
     let verticalInset: Double
@@ -69,7 +24,7 @@ final class WheelPickerUIView: UIView {
     private lazy var stackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = config.spacing
+        stackView.spacing = config.spacing - Constants.markerThickness
         stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -103,14 +58,21 @@ final class WheelPickerUIView: UIView {
         return view
     }()
 
+    private(set) var currentValue: Int = 0
+    private weak var delegate: WheelPickerUIViewDelegate?
+
     init(
         config: WheelPicker.Config,
         uiConfig: WheelPicker.UIConfig,
-        verticalInset: Double
+        verticalInset: Double,
+        initialValue: Int, // Принимаем начальное значение
+        delegate: WheelPickerUIViewDelegate? // Делегат для обратной связи
     ) {
         self.config = config
         self.uiConfig = uiConfig
         self.verticalInset = verticalInset
+        currentValue = initialValue
+        self.delegate = delegate
 
         super.init(frame: .zero)
 
@@ -125,8 +87,53 @@ final class WheelPickerUIView: UIView {
     }
 }
 
+// MARK: - UIScrollViewDelegate
+
+extension WheelPickerUIView: UIScrollViewDelegate {
+    private func calculateCurrentValue() -> Int? {
+        let offsetY = scrollView.contentOffset.y + verticalInset
+        let stepHeight = config.spacing
+
+        let rawIndex = round(offsetY / stepHeight)
+        let index = Int(max(0, min(rawIndex, CGFloat(config.steps.count - 1))))
+
+        guard config.steps.indices.contains(index) else { return nil }
+        return config.steps[index]
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let newValue = calculateCurrentValue(),
+              newValue != currentValue else { return }
+
+        currentValue = newValue
+        delegate?.wheelPickerView(self, didSelectValue: newValue)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            snapToNearestValue()
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        snapToNearestValue()
+    }
+
+    private func snapToNearestValue() {
+        guard let nearestValue = calculateCurrentValue() else {
+            return
+        }
+
+        scrollToValue(nearestValue, animated: true)
+    }
+}
+
+// MARK: setup
+
 private extension WheelPickerUIView {
-    func setupSelf() {}
+    func setupSelf() {
+        scrollView.delegate = self
+    }
 
     func setupViews() {
         config.steps.forEach { step in
@@ -159,7 +166,7 @@ private extension WheelPickerUIView {
 
         indicatorView.snp.makeConstraints { make in
             make.width.equalTo(40)
-            make.height.equalTo(1)
+            make.height.equalTo(Constants.markerThickness)
             make.centerY.equalTo(snp.centerY)
             make.centerX.equalTo(snp.centerX).offset(-20)
         }
@@ -172,12 +179,14 @@ private extension WheelPickerUIView {
             }
 
             NSLayoutConstraint.activate([
-                view.heightAnchor.constraint(equalToConstant: 0.4),
+                view.heightAnchor.constraint(equalToConstant: Constants.markerThickness),
                 view.widthAnchor.constraint(equalToConstant: width),
             ])
         }
     }
 }
+
+// MARK: builders
 
 private extension WheelPickerUIView {
     func makeMarkView() -> UIView {
@@ -196,20 +205,70 @@ private extension WheelPickerUIView {
     }
 }
 
+// MARK: scroll behaviour
+
+private extension WheelPickerUIView {
+    func scrollToValue(_ value: Int, animated: Bool) {
+        guard let index = config.steps.firstIndex(of: value) else {
+            return
+        }
+
+        let targetOffsetY = CGFloat(index) * config.spacing - verticalInset
+
+        scrollView.setContentOffset(CGPoint(x: 0, y: targetOffsetY), animated: animated)
+    }
+}
+
+// MARK: WheelPickerUIViewHolder
+
 struct WheelPickerUIViewHolder: UIViewRepresentable {
     let config: WheelPicker.Config
     let uiConfig: WheelPicker.UIConfig
     let verticalInset: Double
+    @Binding var value: Int
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> WheelPickerUIView {
         WheelPickerUIView(
             config: config,
             uiConfig: uiConfig,
-            verticalInset: verticalInset
+            verticalInset: verticalInset,
+            initialValue: value,
+            delegate: context.coordinator
         )
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func updateUIView(_ uiView: WheelPickerUIView, context: Context) {
+        guard uiView.currentValue != value else {
+            return
+        }
+
+        uiView.scrollToValue(
+            value,
+            animated: context.transaction.animation != nil
+        )
+    }
+
+    func makeCoordinator() -> Coordinator {
+        .init(value: $value)
+    }
+}
+
+// MARK: Coordinator
+
+final class Coordinator {
+    @Binding var value: Int
+
+    init(value: Binding<Int>) {
+        self._value = value
+    }
+}
+
+// MARK: WheelPickerUIViewDelegate
+
+extension Coordinator: WheelPickerUIViewDelegate {
+    func wheelPickerView(_ view: WheelPickerUIView, didSelectValue value: Int) {
+        self.value = value
+    }
 }
 
 #Preview {
