@@ -13,9 +13,10 @@ final class CamsaraDI {
         DISetting.Log.level = .info
 
         let container = DIContainer()
-        container.append(part: CameraServiceAssembly.self)
+        container.append(part: ServiceAssembly.self)
         container.append(part: MainDIPart.self)
         container.append(part: FrameDIPart.self)
+        container.append(part: WheelPickerDIPart.self)
 
         container.initializeSingletonObjects()
 

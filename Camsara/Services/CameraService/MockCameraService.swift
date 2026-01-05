@@ -13,9 +13,7 @@ final class MockCameraService: CameraService {
 
     var deviceFocalLength = 24.0
 
-    func set(zoom: Double) {
-        print("mock camera new zoom: \(zoom)")
-    }
+    func set(zoom: Double) {}
 
     let session: AVCaptureSession
 

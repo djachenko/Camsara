@@ -1,5 +1,5 @@
 //
-//  WheelPicker.swift
+//  WheelPickerView.swift
 //  Camsara
 //
 //  Created by justin on 15.12.2025.
@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 
 
-struct WheelPicker: View {
+struct WheelPickerView: View {
     struct Config {
         let steps: [Int]
         let mainSteps: Set<Int>
@@ -33,8 +33,9 @@ struct WheelPicker: View {
     let config: Config
     private let uiConfig = UIConfig()
 
-    @Binding var value: Int
     @State private var isLoaded = false
+
+    @ObservedObject var viewModel: WheelPickerViewModel
 
     var body: some View {
         GeometryReader {
@@ -72,13 +73,21 @@ struct WheelPicker: View {
                                 )
                                 .overlay(alignment: .trailing) {
                                     if isMain {
+                                        let orientParams = OrientationParameters.parameters(
+                                            for: viewModel.orientation
+                                        )
+
                                         Text("\(index)")
                                             .font(.caption)
                                             .fontWeight(.semibold)
                                             .textScale(.secondary)
                                             .foregroundStyle(uiConfig.labelsColor)
                                             .fixedSize()
-                                            .offset(x: 20)
+                                            .offset(
+                                                x: orientParams.offsetX,
+                                                y: orientParams.offsetY
+                                            )
+                                            .rotationEffect(.degrees(Double(orientParams.angle)))
                                     }
                                 }
                         }
@@ -93,14 +102,14 @@ struct WheelPicker: View {
                     id: .init(
                         get: {
                             if isLoaded {
-                                value
+                                viewModel.pickerValue
                             } else {
                                 nil
                             }
                         },
                         set: { newValue in
                             if let newValue {
-                                value = newValue
+                                viewModel.pickerValue = newValue
                             }
                         }
                     )
@@ -125,7 +134,7 @@ struct WheelPicker: View {
                     config: config,
                     uiConfig: uiConfig,
                     verticalInset: horizontalPadding,
-                    value: $value
+                    viewModel: viewModel
                 )
             }
         }

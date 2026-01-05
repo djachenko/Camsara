@@ -13,7 +13,7 @@ struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
 
     var body: some View {
-        let config = WheelPicker.Config(
+        let config = WheelPickerView.Config(
             steps: Array(
                 Int(viewModel.cameraService.deviceFocalLength)...Defaults.maxFocalLength
             ),
@@ -24,9 +24,9 @@ struct MainView: View {
             ZStack(alignment: .leading) {
                 FrameView(viewModel: viewModel.frameViewModel)
 
-                WheelPicker(
+                WheelPickerView(
                     config: config,
-                    value: $viewModel.sliderValue
+                    viewModel: viewModel.pickerViewModel
                 )
                 .frame(width: geometry.size.width * 0.1)
             }

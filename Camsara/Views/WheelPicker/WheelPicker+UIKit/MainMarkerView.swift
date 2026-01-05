@@ -41,6 +41,10 @@ extension MainMarkerView {
     func set(labelColor: UIColor) {
         valueLabel.textColor = labelColor
     }
+
+    func set(transform: CGAffineTransform) {
+        valueLabel.transform = transform
+    }
 }
 
 extension MainMarkerView {

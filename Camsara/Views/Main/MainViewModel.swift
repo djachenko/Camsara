@@ -14,23 +14,29 @@ final class MainViewModel: ObservableObject {
         static let threshold = 2.0
     }
 
-    @Published var sliderValue = 0
     @Published private var focalRatio = 1.0
 
     let frameViewModel: FrameViewModel
+    let pickerViewModel: WheelPickerViewModel
     let cameraService: CameraService
 
     private var cancellables = Set<AnyCancellable>()
 
     private var maxPreviewScale = 1.0
 
-    init(cameraService: CameraService, frameViewModel: FrameViewModel) {
+    init(
+        cameraService: CameraService,
+        frameViewModel: FrameViewModel,
+        pickerViewModel: WheelPickerViewModel,
+
+    ) {
         self.cameraService = cameraService
         self.frameViewModel = frameViewModel
+        self.pickerViewModel = pickerViewModel
 
-        sliderValue = Int(cameraService.deviceFocalLength)
+        pickerViewModel.pickerValue = Int(cameraService.deviceFocalLength)
 
-        $sliderValue.sink { [weak self] sliderFocal in
+        pickerViewModel.$pickerValue.sink { [weak self] sliderFocal in
             guard let self,
                 sliderFocal != 0 else {
                 return
@@ -82,6 +88,7 @@ final class MainViewModel: ObservableObject {
 extension MainViewModel {
     static let forPreview = MainViewModel(
         cameraService: MockCameraService.forPreview,
-        frameViewModel: .forPreview
+        frameViewModel: .forPreview,
+        pickerViewModel: .forPreview
     )
 }

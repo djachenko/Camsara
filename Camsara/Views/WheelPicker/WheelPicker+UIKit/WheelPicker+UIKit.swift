@@ -5,8 +5,10 @@
 //  Created by justin on 26.12.2025.
 //
 
+import Combine
 import SnapKit
 import SwiftUI
+
 
 protocol WheelPickerUIViewDelegate: AnyObject {
     func wheelPickerView(_ view: WheelPickerUIView, didSelectValue value: Int)
@@ -17,8 +19,8 @@ final class WheelPickerUIView: UIView {
         static let markerThickness = UIScreen.perfectPixel
     }
 
-    let config: WheelPicker.Config
-    let uiConfig: WheelPicker.UIConfig
+    let config: WheelPickerView.Config
+    let uiConfig: WheelPickerView.UIConfig
     let verticalInset: Double
 
     private lazy var stackView = {
@@ -62,8 +64,8 @@ final class WheelPickerUIView: UIView {
     private weak var delegate: WheelPickerUIViewDelegate?
 
     init(
-        config: WheelPicker.Config,
-        uiConfig: WheelPicker.UIConfig,
+        config: WheelPickerView.Config,
+        uiConfig: WheelPickerView.UIConfig,
         verticalInset: Double,
         initialValue: Int, // Принимаем начальное значение
         delegate: WheelPickerUIViewDelegate? // Делегат для обратной связи
@@ -125,6 +127,16 @@ extension WheelPickerUIView: UIScrollViewDelegate {
         }
 
         scrollToValue(nearestValue, animated: true)
+    }
+}
+
+private extension WheelPickerUIView {
+    func update(orientation: DeviceOrientationService.Orientation) {
+        let orientationParams = OrientationParameters.parameters(for: orientation)
+
+        stackView.arrangedSubviews
+            .compactMap { $0 as? MainMarkerView }
+            .forEach { $0.set(transform: orientationParams.transform)}
     }
 }
 
@@ -223,44 +235,55 @@ private extension WheelPickerUIView {
 // MARK: WheelPickerUIViewHolder
 
 struct WheelPickerUIViewHolder: UIViewRepresentable {
-    let config: WheelPicker.Config
-    let uiConfig: WheelPicker.UIConfig
+    let config: WheelPickerView.Config
+    let uiConfig: WheelPickerView.UIConfig
     let verticalInset: Double
-    @Binding var value: Int
+    @ObservedObject var viewModel: WheelPickerViewModel
 
     func makeUIView(context: Context) -> WheelPickerUIView {
-        WheelPickerUIView(
+        let uiView = WheelPickerUIView(
             config: config,
             uiConfig: uiConfig,
             verticalInset: verticalInset,
-            initialValue: value,
+            initialValue: viewModel.pickerValue,
             delegate: context.coordinator
         )
+
+        context.coordinator.uiView = uiView
+
+        return uiView
     }
 
     func updateUIView(_ uiView: WheelPickerUIView, context: Context) {
-        guard uiView.currentValue != value else {
+        guard uiView.currentValue != viewModel.pickerValue else {
             return
         }
 
         uiView.scrollToValue(
-            value,
+            viewModel.pickerValue,
             animated: context.transaction.animation != nil
         )
     }
 
     func makeCoordinator() -> Coordinator {
-        .init(value: $value)
+        Coordinator(viewModel: viewModel)
     }
 }
 
 // MARK: Coordinator
 
 final class Coordinator {
-    @Binding var value: Int
+    @ObservedObject var viewModel: WheelPickerViewModel
+    var uiView: WheelPickerUIView?
 
-    init(value: Binding<Int>) {
-        self._value = value
+    private var cancellables = Set<AnyCancellable>()
+
+    init(viewModel: WheelPickerViewModel) {
+        self.viewModel = viewModel
+
+        viewModel.$orientation.sink { [weak self] in
+            self?.uiView?.update(orientation: $0)
+        }.store(in: &cancellables)
     }
 }
 
@@ -268,7 +291,7 @@ final class Coordinator {
 
 extension Coordinator: WheelPickerUIViewDelegate {
     func wheelPickerView(_ view: WheelPickerUIView, didSelectValue value: Int) {
-        self.value = value
+        viewModel.pickerValue = value
     }
 }
 
