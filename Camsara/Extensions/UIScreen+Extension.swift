@@ -1,20 +1,12 @@
 //
-//  ScreenSize.swift
+//  UIScreen+Extension.swift
 //  Camsara
 //
 //  Created by justin on 01.01.2026.
 //
 
-
-//
-//  UIScreen+Extension.swift
-//  UIComponents
-//
-//  Created by Алексей Сердюков on 26.09.2023.
-//  Copyright © 2023 Amayama LLC. All rights reserved.
-//
-
 import UIKit
+
 
 enum ScreenSize: Int {
     case screen4Inch

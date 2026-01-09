@@ -23,11 +23,9 @@ struct FrameView: View {
             GeometryReader { geometry in
                 Color.clear
                     .onAppear {
-                        viewModel.size = geometry.size
+                        viewModel.update(size: geometry.size)
                     }
-                    .onChange(of: geometry.size) { newSize in
-                        viewModel.size = newSize
-                    }
+                    .onChange(of: geometry.size, perform: viewModel.update(size:))
             }
 
             ZStack {

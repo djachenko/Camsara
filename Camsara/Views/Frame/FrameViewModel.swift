@@ -21,6 +21,10 @@ final class FrameViewModel: ObservableObject {
     ) {
         self.session = session
     }
+
+    func update(size: CGSize) {
+        self.size = size
+    }
 }
 
 extension FrameViewModel {

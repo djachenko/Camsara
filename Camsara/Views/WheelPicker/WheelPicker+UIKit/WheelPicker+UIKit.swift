@@ -131,7 +131,7 @@ extension WheelPickerUIView: UIScrollViewDelegate {
 }
 
 private extension WheelPickerUIView {
-    func update(orientation: DeviceOrientationService.Orientation) {
+    func update(orientation: DeviceOrientation) {
         let orientationParams = OrientationParameters.parameters(for: orientation)
 
         stackView.arrangedSubviews

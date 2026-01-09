@@ -11,14 +11,11 @@ import Foundation
 
 final class WheelPickerViewModel: ObservableObject {
     @Published var pickerValue: Int = 0
-    @Published var orientation: DeviceOrientationService.Orientation = .portrait
-
-    private var cancellables = Set<AnyCancellable>()
+    @Published var orientation: DeviceOrientation = .portrait
 
     init(orientationService: DeviceOrientationService) {
-        orientationService.$orientation.sink { [weak self] in
-            self?.orientation = $0
-        }.store(in: &cancellables)
+        orientationService.$orientation
+            .assign(to: &$orientation)
     }
 }
 

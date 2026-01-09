@@ -11,13 +11,18 @@ import DITranquillity
 
 final class ServiceAssembly: DIPart {
     static func load(container: DIContainer) {
-        container.register(PhysicalCameraService.init)
-        container.register(MockCameraService.init)
 
-        container.register { () -> CameraService in
-            container.resolve() as PhysicalCameraService? ?? container.resolve() as MockCameraService
+        switch Environment.current {
+        case .device:
+            container.register(PhysicalCameraService.init)
+                .postInit { $0?.start() }
+                .as(CameraService.self)
+                .lifetime(.single)
+        case .simulator:
+            container.register(MockCameraService.init)
+                .as(CameraService.self)
+                .lifetime(.single)
         }
-        .lifetime(.single)
 
         container.register(AVCaptureSession.init)
             .lifetime(.single)

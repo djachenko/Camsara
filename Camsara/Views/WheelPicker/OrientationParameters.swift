@@ -54,7 +54,7 @@ struct OrientationParameters {
             .rotated(by: angle * .pi / 180.0)
     }
 
-    static func parameters(for orientation: DeviceOrientationService.Orientation) -> Self {
+    static func parameters(for orientation: DeviceOrientation) -> Self {
         switch orientation {
         case .portrait:
                 .portrait

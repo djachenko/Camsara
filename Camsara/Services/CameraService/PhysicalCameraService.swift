@@ -6,10 +6,12 @@
 //
 
 import AVFoundation
+import Combine
 
 
 final class PhysicalCameraService {
     let session: AVCaptureSession
+    @Published var currentZoom: Double = 1.0
 
     var w2hRatio: Double {
         let dimensions = camera.activeFormat.formatDescription.dimensions
@@ -41,6 +43,8 @@ final class PhysicalCameraService {
     }
 }
 
+// MARK: - CameraService
+
 extension PhysicalCameraService: CameraService {
     var deviceFocalLength: Double {
         if #available(iOS 26.0, *) {
@@ -59,18 +63,41 @@ extension PhysicalCameraService: CameraService {
     }
 
     func set(zoom: Double) {
-        try? camera.lockForConfiguration()
-        defer { camera.unlockForConfiguration() }
+        sessionQueue.async { [weak self] in
+            guard let self else {
+                return
+            }
 
-        if camera.isRampingVideoZoom {
-            camera.cancelVideoZoomRamp()
+            try? camera.lockForConfiguration()
+            defer { camera.unlockForConfiguration() }
+
+            if camera.isRampingVideoZoom {
+                camera.cancelVideoZoomRamp()
+            }
+
+            camera.ramp(toVideoZoomFactor: zoom, withRate: 3.0)
+            currentZoom = zoom
         }
-
-        camera.ramp(toVideoZoomFactor: zoom, withRate: 3.0)
     }
 
     func set(focalLength: Double) {
         set(zoom: focalLength / deviceFocalLength)
+    }
+
+    func start() {
+        sessionQueue.sync { [weak self] in
+            guard let self = self else { return }
+
+            if !self.session.isRunning {
+                self.session.startRunning()
+            }
+        }
+    }
+
+    func stop() {
+        sessionQueue.async { [weak self] in
+            self?.session.stopRunning()
+        }
     }
 }
 
@@ -80,10 +107,11 @@ extension PhysicalCameraService {
     }
 }
 
+// MARK: - Private
+
 private extension PhysicalCameraService {
     func checkPermissions() {
-        switch AVCaptureDevice
-            .authorizationStatus(for: .video) {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { _ in }
         default:
@@ -94,29 +122,32 @@ private extension PhysicalCameraService {
     func configure() {
         checkPermissions()
         configureCaptureSession()
-
-        start()
     }
 
     func configureCaptureSession() {
-        session.beginConfiguration()
-        defer {
-            session.commitConfiguration()
-        }
-
-        try? session.addInput(AVCaptureDeviceInput(device: camera))
-        session.sessionPreset = .photo
-    }
-
-    func start() {
         sessionQueue.async { [weak self] in
-            self?.session.startRunning()
-        }
-    }
+            guard let self else {
+                return
+            }
 
-    func end() {
-        sessionQueue.async { [weak self] in
-            self?.session.stopRunning()
+            session.beginConfiguration()
+            defer {
+                session.commitConfiguration()
+            }
+
+            // Добавляем устройство ввода
+            do {
+                let input = try AVCaptureDeviceInput(device: camera)
+
+                if session.canAddInput(input) {
+                    session.addInput(input)
+                }
+            } catch {
+                print("Error adding camera input: \(error)")
+            }
+
+            // Настраиваем пресет
+            session.sessionPreset = .photo
         }
     }
 }

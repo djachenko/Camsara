@@ -43,7 +43,9 @@ extension MainMarkerView {
     }
 
     func set(transform: CGAffineTransform) {
-        valueLabel.transform = transform
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.valueLabel.transform = transform
+        }
     }
 }
 
