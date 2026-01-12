@@ -116,6 +116,10 @@ multiline_arguments:
   first_argument_location: next_line # или 'same_line'
   only_enforce_after_first_closure_on_first_line: true
 
+large_tuple:
+    warning: 3
+    error: 5
+
 
 ### 5. Формат отчета и общие настройки ###
 reporter: "xcode" # Формат вывода, который Xcode понимает как кликабельные предупреждения

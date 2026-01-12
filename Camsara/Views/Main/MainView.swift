@@ -24,11 +24,22 @@ struct MainView: View {
             ZStack(alignment: .leading) {
                 FrameView(viewModel: viewModel.frameViewModel)
 
-                WheelPickerView(
-                    config: config,
-                    viewModel: viewModel.pickerViewModel
-                )
-                .frame(width: geometry.size.width * 0.1)
+                HStack {
+                    WheelPickerView(
+                        config: config,
+                        viewModel: viewModel.pickerViewModel
+                    )
+                    .frame(width: geometry.size.width * 0.1)
+
+                    Spacer()
+                        .background(.green)
+
+                    HueRingsView(viewModel: viewModel.hueRingsViewModel)
+                        .frame(width: geometry.size.width * 0.1)
+
+                    Spacer()
+                        .frame(width: geometry.size.width * 0.1)
+                }
             }
         }
         .ignoresSafeArea()

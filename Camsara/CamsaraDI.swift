@@ -17,6 +17,7 @@ final class CamsaraDI {
         container.append(part: MainDIPart.self)
         container.append(part: FrameDIPart.self)
         container.append(part: WheelPickerDIPart.self)
+        container.append(part: HueRingsDIPart.self)
 
         container.initializeSingletonObjects()
 

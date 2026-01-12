@@ -7,18 +7,28 @@
 
 import AVFoundation
 import Combine
+import UIKit
 
+protocol ColorsSource {
+    var colors: AnyPublisher<[RGBColor], Never> { get }
+}
+
+final class MockColorsSource: ColorsSource {
+    var colors: AnyPublisher<[RGBColor], Never> {
+        Just([.red, .green, .blue])
+            .eraseToAnyPublisher()
+    }
+}
 
 final class MainViewModel: ObservableObject {
-    private enum Constants {
-        static let threshold = 2.0
-    }
-
-    @Published private var focalRatio = 1.0
+    @Published var colors: [HueMarker] = []
 
     let frameViewModel: FrameViewModel
     let pickerViewModel: WheelPickerViewModel
+    let hueRingsViewModel: HueRingsViewModel
+
     let cameraService: CameraService
+    let zoomController: ZoomController
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -28,60 +38,46 @@ final class MainViewModel: ObservableObject {
         cameraService: CameraService,
         frameViewModel: FrameViewModel,
         pickerViewModel: WheelPickerViewModel,
-
+        hueRingsViewModel: HueRingsViewModel
     ) {
         self.cameraService = cameraService
         self.frameViewModel = frameViewModel
         self.pickerViewModel = pickerViewModel
+        self.hueRingsViewModel = hueRingsViewModel
+
+        self.zoomController = ZoomController(
+            cameraFocalLength: cameraService.deviceFocalLength,
+            cameraRatio: cameraService.w2hRatio
+        )
 
         pickerViewModel.pickerValue = Int(cameraService.deviceFocalLength)
 
-        pickerViewModel.$pickerValue.sink { [weak self] sliderFocal in
-            guard let self,
-                sliderFocal != 0 else {
-                return
+        pickerViewModel.$pickerValue
+            .removeDuplicates()
+            .throttle(for: .milliseconds(50), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] in
+                guard let self else {
+                    return
+                }
+
+                let zooms = self.zoomController.set(focalLength: $0)
+
+                self.frameViewModel.frameScale = zooms.frameScale
+                self.frameViewModel.previewScale = zooms.previewScale
+
+                self.cameraService.set(zoom: zooms.cameraScale)
             }
+            .store(in: &cancellables)
 
-            let sliderFocal = Double(sliderFocal)
-            let cameraFocal = cameraService.deviceFocalLength
-
-            focalRatio = sliderFocal / cameraFocal
-        }.store(in: &cancellables)
-
-        $focalRatio.sink { [weak self] focalRatio in
-            self?.frameViewModel.frameScale = 1 / min(focalRatio, Constants.threshold)
-        }.store(in: &cancellables)
-
-        $focalRatio.sink { [weak self] focalRatio in
-            guard let self else {
-                return
-            }
-
-            let scale = focalRatio / Constants.threshold
-
-            frameViewModel.previewScale = (1...maxPreviewScale).clamp(scale)
-        }.store(in: &cancellables)
-
-        $focalRatio.sink { [weak self] focalRatio in
-            guard let self else {
-                return
-            }
-
-            let scale = focalRatio / Constants.threshold / maxPreviewScale
-
-            cameraService.set(zoom: max(1, scale))
-        }.store(in: &cancellables)
 
         frameViewModel.$size.sink { [weak self] size in
-            guard let self else {
-                return
-            }
-
-            let minCameraWidth = size.height * cameraService.w2hRatio
-            let maxCameraWidth = size.width
-
-            maxPreviewScale = max(1, maxCameraWidth / minCameraWidth)
+            self?.zoomController.set(cameraSize: size)
         }.store(in: &cancellables)
+//
+//        colorsProvider.colors
+//            .map { $0.map { HueMarker($0) }}
+//            .receive(on: DispatchQueue.main)
+//            .assign(to: &$colors)
     }
 }
 
@@ -89,6 +85,7 @@ extension MainViewModel {
     static let forPreview = MainViewModel(
         cameraService: MockCameraService.forPreview,
         frameViewModel: .forPreview,
-        pickerViewModel: .forPreview
+        pickerViewModel: .forPreview,
+        hueRingsViewModel: .forPreview
     )
 }

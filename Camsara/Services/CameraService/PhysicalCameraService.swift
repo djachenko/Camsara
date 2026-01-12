@@ -9,18 +9,21 @@ import AVFoundation
 import Combine
 
 
-final class PhysicalCameraService {
+final class PhysicalCameraService: NSObject {
     let session: AVCaptureSession
+
+    @Published var frame: CMSampleBuffer?
     @Published var currentZoom: Double = 1.0
 
     var w2hRatio: Double {
         let dimensions = camera.activeFormat.formatDescription.dimensions
-
         return Double(dimensions.width) / Double(dimensions.height)
     }
 
     private let sessionQueue = DispatchQueue(label: "com.raywenderlich.SessionQ")
     private let camera: AVCaptureDevice
+    private let videoOutput = AVCaptureVideoDataOutput()
+    private var cancellables = Set<AnyCancellable>()
 
     init?(session: AVCaptureSession) {
         guard let camera = AVCaptureDevice.DiscoverySession(
@@ -38,6 +41,8 @@ final class PhysicalCameraService {
 
         self.session = session
         self.camera = camera
+
+        super.init()
 
         configure()
     }
@@ -101,9 +106,25 @@ extension PhysicalCameraService: CameraService {
     }
 }
 
-extension PhysicalCameraService {
-    func set( delegate: AVCaptureVideoDataOutputSampleBufferDelegate, queue: DispatchQueue ) {
-        //    videoOutput.setSampleBufferDelegate(delegate, queue: queue)
+// MARK: - FrameSource
+
+extension PhysicalCameraService: FrameSource {
+    var framePublisher: AnyPublisher<CMSampleBuffer, Never> {
+        $frame
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+    }
+}
+
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+
+extension PhysicalCameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(
+        _ output: AVCaptureOutput,
+        didOutput sampleBuffer: CMSampleBuffer,
+        from connection: AVCaptureConnection
+    ) {
+        self.frame = sampleBuffer
     }
 }
 
@@ -148,6 +169,16 @@ private extension PhysicalCameraService {
 
             // Настраиваем пресет
             session.sessionPreset = .photo
+
+            // Настраиваем видео выход
+            videoOutput.videoSettings = [
+                kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+            ]
+            videoOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+
+            if session.canAddOutput(videoOutput) {
+                session.addOutput(videoOutput)
+            }
         }
     }
 }

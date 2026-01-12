@@ -27,36 +27,32 @@ final class CameraPreviewView: UIView {
         AVCaptureVideoPreviewLayer.self
     }
 
-    var videoPreviewLayer: AVCaptureVideoPreviewLayer? {
-        return layer as? AVCaptureVideoPreviewLayer
+    var videoPreviewLayer: AVCaptureVideoPreviewLayer {
+        guard let layer = layer as? AVCaptureVideoPreviewLayer else {
+            fatalError("Layer must be AVCaptureVideoPreviewLayer")
+        }
+
+        return layer
     }
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
-        if superview != nil,
-           let videoPreviewLayer {
+        if superview != nil {
             videoPreviewLayer.session = captureSession
             videoPreviewLayer.videoGravity = .resizeAspect
 
             videoPreviewLayer.connection?.videoOrientation = .landscapeLeft
+            videoPreviewLayer.connection?.automaticallyAdjustsVideoMirroring = false
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        videoPreviewLayer?.frame = bounds
+        videoPreviewLayer.frame = bounds
     }
 }
-
-//extension CameraPreviewView: UIViewRepresentable {
-//    func updateUIView(_ uiView: UIViewType, context: Context) {}
-//    
-//    func makeUIView(context: Context) -> some UIView {
-//        self
-//    }
-//}
 
 struct CameraPreviewViewHolder: UIViewRepresentable {
     let session: AVCaptureSession
